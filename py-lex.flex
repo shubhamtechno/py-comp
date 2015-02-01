@@ -1,6 +1,4 @@
 %{
-int beginingOfFile = 1;
-
 int stack[1000];
 int top = 0;
 
@@ -15,6 +13,22 @@ int pop() {
 void push(int value) {
 	stack[top++] = value;
 }
+
+void handleIndentation(int currentIndentation) {
+	int previousIndentation = poll();
+	
+	if (currentIndentation > previousIndentation) {
+		printf("(INDENT)\n");
+		push(currentIndentation);
+		return;
+	}
+
+	while (currentIndentation < previousIndentation) {
+		pop();
+		printf("(DEDENT)\n");
+		previousIndentation = poll();
+	}
+}
 %}
 
 digit		[0-9]
@@ -23,7 +37,7 @@ keyword		False|class|finally|is|return|None|continue|for|lambda|try|True|def|fro
 operator	\+|-|\*|\*\*|\/|\/\/|%|<<|>>|&|\||\^|~|<|>|<=|>=|==|!=
 delimeter	\(|\)|\[|\]|\{|\}|,|:|\.|;|@|=|->|\+=|-=|\*=|\/=|\/\/=|%=|&=|\|=|\^=|>>=|<<=|\*\*=
 string		\"[^"]*\"
-comment		[ ]*#.*\n
+comment		[ ]*#.*
 newline		[ ]*\n
 spaces		[ ]+
 
@@ -34,74 +48,88 @@ identifier	{alpha}{alnum}*
 punctuation	{operator}|{delimeter}
 literal		{string}|{float}|{int}
 
-%s NEWLINE
+%s MAIN NEWLINE
 
 %%
-<INITIAL>{newline} {
-	if (!beginingOfFile)
-		printf("(NEWLINE)\n");
+<MAIN>{newline} {
+	printf("(NEWLINE)\n");
 	BEGIN(NEWLINE);
 }
 
-<NEWLINE>{newline} {
-	// ignore multiple newlines
-}
-
-<INITIAL>{spaces} {
+<MAIN>{spaces} {
 	// ignore these spaces
 }
 
-<NEWLINE>{spaces} {
-	// these spaces are indentation.
-
-	int previousIndentation = poll();
-	int currentIndentation = strlen(yytext) - 1; // -1 to account for new line character
-
-	if (currentIndentation > previousIndentation) {
-		push(currentIndentation);
-		printf("(INDENT)\n");
-	} else if (currentIndentation < previousIndentation) {
-		pop();	
-		printf("(DEDENT)\n");
-	} else {
-		// do nothing when equal
-	}
-	BEGIN(INITIAL);
-}
-
-{keyword} {
+<MAIN,INITIAL>{keyword} {
 	printf("(KEYWORD %s)\n", yytext);
-
-	beginingOfFile = 0;
-	BEGIN(INITIAL);
+	BEGIN(MAIN);
 }
 
-{identifier} {
+<MAIN,INITIAL>{identifier} {
 	printf("(ID \"%s\")\n", yytext);
-
-	beginingOfFile = 0;
-	BEGIN(INITIAL);
+	BEGIN(MAIN);
 }
 
-{punctuation} {
+<MAIN,INITIAL>{punctuation} {
 	printf("(PUNCT \"%s\")\n", yytext);
-
-	beginingOfFile = 0;
-	BEGIN(INITIAL);
+	BEGIN(MAIN);
 }
 
-{literal} {
+<MAIN,INITIAL>{literal} {
 	printf("(LIT %s)\n", yytext);
-
-	beginingOfFile = 0;
-	BEGIN(INITIAL);
+	BEGIN(MAIN);
 }
 
-{comment} {
-	// ignore comments
+<MAIN>{comment} {
+	printf("(NEWLINE)\n");
+	BEGIN(NEWLINE);
+}
+
+<INITIAL,NEWLINE>{newline} {
+	// ignore newlines at beginning of file
+	// ignore multiple newlines
+}
+
+<NEWLINE>{spaces} {
+	int currentIndentation = strlen(yytext); 
+	handleIndentation(currentIndentation);
+	BEGIN(MAIN);
+}
+
+<NEWLINE>{keyword} {
+	handleIndentation(0);
+
+	printf("(KEYWORD %s)\n", yytext);
+	BEGIN(MAIN);
+}
+
+<NEWLINE>{identifier} {
+	handleIndentation(0);
+
+	printf("(ID \"%s\")\n", yytext);
+	BEGIN(MAIN);
+}
+
+<NEWLINE>{punctuation} {
+	handleIndentation(0);
+
+	printf("(PUNCT \"%s\")\n", yytext);
+	BEGIN(MAIN);
+}
+
+<NEWLINE>{literal} {
+	handleIndentation(0);
+
+	printf("(LIT %s)\n", yytext);
+	BEGIN(MAIN);
+}
+
+<INITIAL,NEWLINE>{comment} {
+	// ignore comments at beginning of file
 }
 
 .|\n {
+	// if nothing matched then we have a problem
 	printf("error %s\n", yytext);
 }
 
