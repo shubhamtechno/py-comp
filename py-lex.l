@@ -5,19 +5,23 @@
 int stack[MAX_INDENTS];
 int top = 0;
 
-int poll() {
+int poll() 
+{
 	return stack[top - 1];
 }
 
-int pop() {
+int pop() 
+{
 	return stack[--top];	
 }
 
-void push(int value) {
+void push(int value) 
+{
 	stack[top++] = value;
 }
 
-int handle_indentation(int current_indentation) {
+int handle_indentation(int current_indentation) 
+{
 	int previous_indentation = poll();
 	
 	if (current_indentation > previous_indentation) {
@@ -34,6 +38,90 @@ int handle_indentation(int current_indentation) {
 	}
 	yylval = times_dedented;
 	return DEDENT;
+}
+
+int get_token_for_keyword(char *keyword) 
+{
+	// TODO -- add rest of keywords
+	if (strcmp(keyword, "False") == 0) 
+	{
+		return FALSE;
+	} 
+	else if (strcmp(keyword, "is") == 0) 
+	{
+		return IS;
+	} 
+	else if (strcmp(keyword, "return") == 0) 
+	{
+		return RETURN;
+	}
+	else if (strcmp(keyword, "for") == 0) 
+	{
+		return FOR;
+	}
+	else if (strcmp(keyword, "if") == 0) 
+	{
+		return IF;
+	}
+	else if (strcmp(keyword, "elif") == 0) 
+	{
+		return ELIF;
+	}
+	else if (strcmp(keyword, "else") == 0) 
+	{
+		return ELSE;
+	}
+	else if (strcmp(keyword, "def") == 0) 
+	{
+		return DEF;
+	}
+	return KEYWORD;
+}
+
+int get_token_for_punctuation(char *punctuation) 
+{
+	// TODO -- add rest of punctuation
+	if (strcmp(punctuation, "(") == 0) 
+	{
+		return '(';
+	} 
+	else if (strcmp(punctuation, ")") == 0) 
+	{
+		return ')';
+	} 
+	else if (strcmp(punctuation, "+") == 0) 
+	{
+		return '+';
+	}
+	else if (strcmp(punctuation, "-") == 0) 
+	{
+		return '-';
+	}
+	else if (strcmp(punctuation, "*") == 0) 
+	{
+		return '*';
+	}
+	else if (strcmp(punctuation, "/") == 0) 
+	{
+		return '/';
+	}
+	else if (strcmp(punctuation, "%") == 0) 
+	{
+		return '%';
+	}
+	else if (strcmp(punctuation, "=") == 0) 
+	{
+		return '=';
+	}
+	else if (strcmp(punctuation, "<") == 0) 
+	{
+		return '<';
+	}
+	else if (strcmp(punctuation, ";") == 0) 
+	{
+		return ';';
+	}
+	return PUNCT;
 }
 
 %}
@@ -60,9 +148,9 @@ literal		{string}|{float}|{int}
 %%
 
 <INITIAL>{keyword} {
-	yylval = 12;
 	BEGIN(MAIN);
-	return KEYWORD;
+	// TODO -- add rest of keywords.
+	return get_token_for_keyword(yytext);
 }
 
 <INITIAL>{identifier} {
@@ -77,7 +165,7 @@ literal		{string}|{float}|{int}
 
 <INITIAL>{punctuation} {
 	BEGIN(MAIN);
-	return PUNCT;
+	return get_token_for_punctuation(yytext);
 }
 
 <INITIAL,NEWLINE_STATE>{newline} {
@@ -99,7 +187,7 @@ literal		{string}|{float}|{int}
 }
 
 <MAIN>{keyword} {
-	return KEYWORD;
+	return get_token_for_keyword(yytext);
 }
 
 <MAIN>{identifier} {
@@ -111,7 +199,7 @@ literal		{string}|{float}|{int}
 }
 
 <MAIN>{punctuation} {
-	return PUNCT;
+	return get_token_for_punctuation(yytext);
 }
 
 <NEWLINE_STATE>{spaces} {
@@ -135,26 +223,3 @@ literal		{string}|{float}|{int}
 
 %%
 
-int main() {
-	int tok;
-
-	while(tok = yylex()) {
-		switch(tok) {
-			case NEWLINE: printf("(NEWLINE)\n"); break;
-			case INDENT: printf("(INDENT)\n"); break;
-			case DEDENT: 
-				for (int i = 0; i < yylval; i++) { 
-					printf("(DEDENT)\n"); 
-				}
-				break;
-			case KEYWORD: printf("(KEYWORD %s)\n", yytext); break;
-			case PUNCT: printf("(PUNCT \"%s\")\n", yytext); break;
-			case ID: printf("(ID \"%s\")\n", yytext); break;
-			case LIT: printf("(LIT %s)\n", yytext); break;
-		}
-	}
-
-	printf("(ENDMARKER)\n");
-
-	return 0;
-}

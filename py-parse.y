@@ -1,72 +1,57 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 %}
 
-%token NEWLINE INDENT DEDENT ENDMARKER 
+%token NEWLINE INDENT DEDENT 
 %token KEYWORD PUNCT ID
 %token LIT
+%token ENDMARKER 
+
+%token FALSE IS RETURN FOR IF ELIF ELSE DEF
 
 %%
 
-fileinput               : NEWLINE
-                        | fileinput statement ENDMARKER
+simple_statement        : return_statement ';' NEWLINE
+							{ printf("small!\n"); }
                         ;
 
-statement               : simple_statement
-                        | compound_statement
-                        ;
-
-simple_statement        : small_statement PUNCT NEWLINE
-                        ;
-
-small_statement         : flow_statement
-                        ;
-
-flow_statement          : return_statement
-                        ;
-
-return_statement        : KEYWORD expression
-                        ;
-
-expression              : arithmetic_expression
+return_statement        : RETURN arithmetic_expression 
+							{ 
+								printf("return!\n"); 
+							}
                         ;
 
 arithmetic_expression   : term 
-                        | arithmetic_expression '+' term
-                        | arithmetic_expression '-' term
+                        | arithmetic_expression '+' term 
+							{ 
+								printf("arith!\n"); 
+							}
+                        | arithmetic_expression '-' term 
+							{ 
+								printf("arith!\n"); 
+							}
                         ;
 
-term                    : factor
-                        | term '*' factor
-                        | term '/' factor
-                        ;
-
-factor                  : power
-                        ;
-
-power                   : atom 
-                        | atom trailer
-                        ;
-
-atom                    : LIT 
-                        ;
-
-trailer                 : '(' argument_list ')'
-                        ;
-
-argument_list           : argument
-                        | argument_list ',' argument
-                        ;
-
-argument                : expression
-                        ;
-
-compound_statement      : 
-                        ;
-
-
+term                    : LIT 
+							{
+								printf("term!\n"); 
+							}
+						;
 %%
 
-int yyerror(char *s) {
+int main() 
+{
+	//int tok;
+
+	//while(tok = yylex()) {
+	//	printf("%d\n", tok);
+	//}
+
+	yyparse();
+}
+
+int yyerror(char *s) 
+{
 	printf("%s\n", s);	
 }
