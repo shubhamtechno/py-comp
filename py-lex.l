@@ -24,14 +24,16 @@ int handle_indentation(int current_indentation)
 {
 	int previous_indentation = poll();
 	
-	if (current_indentation > previous_indentation) {
+	if (current_indentation > previous_indentation) 
+	{
 		push(current_indentation);
 		return INDENT;
 	}
 
 	// TODO -- This might be a terrible way of handling dedentation?
 	int times_dedented = 0;
-	while (current_indentation < previous_indentation) {
+	while (current_indentation < previous_indentation) 
+	{
 		pop();
 		times_dedented++;
 		previous_indentation = poll();
@@ -121,6 +123,14 @@ int get_token_for_punctuation(char *punctuation)
 	{
 		return ';';
 	}
+	else if (strcmp(punctuation, ":") == 0) 
+	{
+		return ':';
+	}
+	else if (strcmp(punctuation, ",") == 0) 
+	{
+		return ',';
+	}
 	return PUNCT;
 }
 
@@ -206,14 +216,20 @@ literal		{string}|{float}|{int}
 	BEGIN(MAIN);
 	// handle indentation here.
 	// current indentation is length of yytext, i.e. amount of spaces matched.
-	return handle_indentation(strlen(yytext));
+	int token = handle_indentation(strlen(yytext));
+	if (!(token == DEDENT && yylval == 0)) {
+		return token;
+	}
 }
 
 <NEWLINE_STATE>{keyword}|{identifier}|{literal}|{punctuation} {
 	BEGIN(MAIN);
 	// put back the matched text after entering main.
 	yyless(0);
-	return handle_indentation(0);
+	int token = handle_indentation(0);
+	if (!(token == DEDENT && yylval == 0)) {
+		return token;
+	}
 }
 
 .|\n {
