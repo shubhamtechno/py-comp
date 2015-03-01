@@ -1,7 +1,7 @@
 all: 
 	bison -d py-parse.y
 	flex py-lex.l
-	gcc py-parse.tab.c lex.yy.c -lfl -std=c99
+	gcc py-parse.tab.c lex.yy.c -lfl 
 
 run:
 	make
