@@ -1,5 +1,5 @@
 all: 
-	bison -d py-parse.y
+	bison -d py-parse.y -Wconflicts-sr
 	flex py-lex.l
 	gcc py-parse.tab.c lex.yy.c -lfl 
 

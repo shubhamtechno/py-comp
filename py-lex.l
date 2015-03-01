@@ -36,7 +36,7 @@ int handle_indentation(int current_indentation)
         return DEDENT;
     }
 
-    return 0;
+    return -1;
 }
 
 int get_token_for_keyword(char *keyword) 
@@ -111,6 +111,10 @@ int get_token_for_punctuation(char *punctuation)
     else if (strcmp(punctuation, "=") == 0) 
     {
         return '=';
+    }
+    else if (strcmp(punctuation, "==") == 0) 
+    {
+        return DOUBLE_EQ;
     }
     else if (strcmp(punctuation, "<") == 0) 
     {
@@ -216,7 +220,8 @@ literal     {string}|{float}|{int}
     if (current_indentation >= poll()) BEGIN(MAIN);
     else yyless(0);
 
-    return token;
+    if (token != -1)
+        return token;
 }
 
 <NEWLINE_STATE>{keyword}|{identifier}|{literal}|{punctuation} {
@@ -225,7 +230,16 @@ literal     {string}|{float}|{int}
     int token = handle_indentation(0);
     if (0 >= poll()) BEGIN(MAIN);
 
-    return token;
+    if (token != -1)
+        return token;
+}
+
+<NEWLINE_STATE><<EOF>> {
+    if (0 < poll()) 
+    {
+        return handle_indentation(0);
+    }
+    yyterminate();
 }
 
 .|\n {
@@ -234,4 +248,3 @@ literal     {string}|{float}|{int}
 }
 
 %%
-
