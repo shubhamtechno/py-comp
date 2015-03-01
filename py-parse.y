@@ -12,96 +12,82 @@
 
 %%
 
-file_input				: stmt 
-						| file_input stmt 
-							{ printf("multiple file!\n"); }
-						;
+file_input		: stmt 
+				| file_input stmt 
+				;
 
-funcdef					: DEF ID parameters ':' NEWLINE
-							{ printf("function\n"); }
-						;
+funcdef			: DEF ID parameters ':' NEWLINE
+				;
 
-parameters				: '(' typedargslist ')'
-						;
+parameters		: '(' typedargslist ')'
+				;
 
 /* TODO -- make this allow more types of arguments. */
-typedargslist			: ID
-						| typedargslist ',' ID 
-						;
+typedargslist	: ID
+				| typedargslist ',' ID 
+				;
 
-stmt					: simple_stmt 
-							{ printf("statement\n"); }
-						| compound_stmt
-						;
+stmt			: simple_stmt 
+				| compound_stmt
+				;
 
 /* TODO -- allow multiple simple statements on same line. */
-simple_stmt		        : small_stmt ';' NEWLINE
-							{ printf("simple statement!\n"); }
-						;
+simple_stmt		: small_stmt ';' NEWLINE
+				;
 
-compound_stmt			: funcdef
-						;
+compound_stmt	: funcdef
+				;
 
-small_stmt				: flow_stmt
-							{ printf("small statement!\n"); }
-						;
+small_stmt		: flow_stmt
+				;
 
-flow_stmt				: return_stmt
-							{ printf("flow statement!\n"); }
-						;
+flow_stmt		: return_stmt
+				;
 
-return_stmt			    : RETURN testlist 
-							{ printf("return!\n"); }
-                        ;
+return_stmt		: RETURN testlist 
+				;
 
-testlist				: test
-						;
+testlist		: test
+				;
 
-test					: or_test
-						;
+test			: or_test
+				;
 
-or_test					: and_test
-						;
+or_test			: and_test
+				;
 
-and_test				: not_test
-						;
+and_test		: not_test
+				;
 
-not_test				: comparison
-						;
+not_test		: comparison
+				;
 
-comparison				: expr
-						;
+comparison		: expr
+				;
 
-expr					: arith_expr
-						;
+expr			: arith_expr
+				;
 
-arith_expr				: term 
-                        | arith_expr '+' term 
-							{ printf("arith!\n"); }
-                        | arith_expr '-' term 
-							{ printf("arith!\n"); }
-                        ;
+arith_expr		: term 
+				| arith_expr '+' term 
+				| arith_expr '-' term 
+				;
 
-term                    : factor
-						| term '*' factor 
-							{ printf("term!\n"); }
-						| term '/' factor
-							{ printf("term!\n"); }
-						| term '%' factor
-							{ printf("term!\n"); }
-						;
+term			: factor
+				| term '*' factor 
+				| term '/' factor
+				| term '%' factor
+				;
 
-factor					: power
-						;
+factor			: power
+				;
 
-power					: atom
-						;
+power			: atom
+				;
 
-atom					: LIT
-							{ printf("atom!\n"); }
-						| ID
-							{ printf("atom!\n"); }
-						;
+atom			: LIT
+				| ID
+				;
 
 %%
 
