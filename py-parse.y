@@ -18,8 +18,9 @@ file_input
     ;
 
 funcdef
-    : DEF ID parameters ':' NEWLINE
+    : DEF ID parameters ':' suite
     ;
+
 parameters
     : '(' typedargslist ')'
     ;
@@ -28,6 +29,13 @@ parameters
 typedargslist
     : ID
     | typedargslist ',' ID 
+    ;
+
+suite
+    : stmt 
+        { printf("suite\n"); }
+    | INDENT suite DEDENT 
+        {printf("suite\n"); }
     ;
 
 stmt            
@@ -114,14 +122,17 @@ atom
 
 int main() 
 {
-//  int tok;
+//    int tok;
 //
-//  push(0);
-//  while(tok = yylex()) {
-//      printf("%d\n", tok);
-//  }
+//    push(0);
+//    while(tok = yylex()) {
+//        printf("%d\n", tok);
+//    }
+//  printf("0\n");
 
     yyparse();
+
+    return 0;
 }
 
 int yyerror(char *s) 

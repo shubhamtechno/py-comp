@@ -1,55 +1,55 @@
-(KEYWORD def)
-(ID "fact")
-(PUNCT "(")
-(ID "x")
-(PUNCT ")")
-(PUNCT ":")
-(NEWLINE)
-(INDENT)
-(KEYWORD if)
-(ID "x")
-(PUNCT "<")
-(LIT 0)
-(PUNCT ":")
-(NEWLINE)
-(INDENT)
-(KEYWORD return)
-(LIT 1)
-(NEWLINE)
-(DEDENT)
-(KEYWORD elif)
-(ID "x")
-(PUNCT "==")
-(LIT 0)
-(PUNCT ":")
-(NEWLINE)
-(INDENT)
-(KEYWORD return)
-(LIT 1)
-(NEWLINE)
-(DEDENT)
-(KEYWORD else)
-(PUNCT ":")
-(NEWLINE)
-(INDENT)
-(KEYWORD return)
-(ID "x")
-(PUNCT "*")
-(ID "fact")
-(PUNCT "(")
-(ID "x")
-(PUNCT "-")
-(LIT 1)
-(PUNCT ")")
-(NEWLINE)
-(DEDENT)
-(DEDENT)
-(ID "print")
-(PUNCT "(")
-(ID "fact")
-(PUNCT "(")
-(LIT 4)
-(PUNCT ")")
-(PUNCT ")")
-(NEWLINE)
-(ENDMARKER)
+273
+263
+40
+263
+41
+58
+258
+259
+270
+263
+60
+264
+58
+258
+259
+268
+264
+258
+260
+271
+263
+262
+264
+58
+258
+259
+268
+264
+258
+260
+272
+58
+258
+259
+268
+263
+42
+263
+40
+263
+45
+264
+41
+258
+260
+260
+263
+40
+263
+40
+264
+41
+41
+258
+0
