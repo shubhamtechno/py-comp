@@ -27,16 +27,16 @@ parameters
 /* TODO -- make this allow more types of arguments. */
 typedargslist
     : ID
-	| typedargslist ',' ID 
-	;
+    | typedargslist ',' ID 
+    ;
 
-stmt			
+stmt            
     : simple_stmt 
     | compound_stmt
     ;
 
 /* TODO -- allow multiple simple statements on same line. */
-simple_stmt	
+simple_stmt 
     : small_stmt ';' NEWLINE
     ;
 
@@ -46,7 +46,7 @@ compound_stmt
 
 small_stmt
     : flow_stmt
-	;	
+    ;   
 
 flow_stmt
     : return_stmt
@@ -60,9 +60,9 @@ testlist
     : test
     ;
 
-test			
+test            
     : or_test
-	;
+    ;
 
 or_test
     : and_test
@@ -80,7 +80,7 @@ comparison
     : expr
     ;
 
-expr			
+expr            
     : arith_expr
     ;
 
@@ -92,10 +92,10 @@ arith_expr
 
 term
     : factor
-	| term '*' factor 
-	| term '/' factor
-	| term '%' factor
-	;
+    | term '*' factor 
+    | term '/' factor
+    | term '%' factor
+    ;
 
 factor
     : power
@@ -103,9 +103,9 @@ factor
 
 power
     : atom
-	;
+    ;
 
-atom			
+atom            
     : LIT
     | ID
     ;
@@ -114,17 +114,17 @@ atom
 
 int main() 
 {
-//	int tok;
+//  int tok;
 //
-//	push(0);
-//	while(tok = yylex()) {
-//		printf("%d\n", tok);
-//	}
+//  push(0);
+//  while(tok = yylex()) {
+//      printf("%d\n", tok);
+//  }
 
-	yyparse();
+    yyparse();
 }
 
 int yyerror(char *s) 
 {
-	printf("%s\n", s);	
+    printf("%s\n", s);  
 }
