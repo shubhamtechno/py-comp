@@ -1,24 +1,6 @@
 %{
 #include "py-parse.tab.h"
-#define MAX_INDENTS 1000
-
-int stack[MAX_INDENTS];
-int top = 0;
-
-int poll() 
-{
-    return stack[top - 1];
-}
-
-int pop() 
-{
-    return stack[--top];    
-}
-
-void push(int value) 
-{
-    stack[top++] = value;
-}
+#include "py-comp.h"
 
 int handle_indentation(int current_indentation) 
 {
